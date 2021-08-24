@@ -1,35 +1,59 @@
 import Head from 'next/head'
-import Layout, { siteTitle } from '../components/layout'
+import Layout, {siteTitle} from '../components/layout'
 import utilStyles from '../styles/utils.module.css'
+import { getSortedPostsData } from '../lib/posts'
+import Link from 'next/link'
+import Date from '../components/date'
 
-export default function Home() {
-  return (
-    <Layout home>
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+export async function getStaticProps() {
+    const allPostsData = getSortedPostsData()
+    return {
+        props: {
+            allPostsData
+        }
+    }
+}
 
-      <section className={utilStyles.headingMd}>
-        <p>Hello, I am Carmen. I'm a Software Engineer and a translator (English/Spanish)</p>
-        <p>
-          (This is a sample website - you’ll be building a site like this on{' '}
-          <a href="https://nextjs.org/learn">our Next.js tutorial</a>.)
-        </p>
-      </section>
+export default function Home({allPostsData}) {
+    return (
+        <Layout home>
+            <Head>
+                <title>Create Next App</title>
+                <link rel="icon" href="/favicon.ico"/>
+            </Head>
 
-      <footer>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel" className="logo" />
-        </a>
-      </footer>
+            <section className={utilStyles.headingMd}>
+                <p>Hello, I am Carmen. I'm a Software Engineer and a translator (English/Spanish)</p>
+            </section>
+            <section className={`${utilStyles.headingMd} ${utilStyles.padding1px}`}>
+                <h2 className={utilStyles.headingLg}>Blog</h2>
+                <ul className={utilStyles.list}>
+                    {allPostsData.map(({id, date, title}) => (
+                        <li className={utilStyles.listItem} key={id}>
+                            <Link href={`/posts/${id}`}>
+                                <a>{title}</a>
+                            </Link>
+                            <br />
+                            <small className={utilStyles.lightText}>
+                                <Date dateString={date} />
+                            </small>
+                        </li>
+                    ))}
+                </ul>
+            </section>
 
-      <style jsx>{`
+            <footer>
+                <a
+                    href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    Powered by{' '}
+                    <img src="/vercel.svg" alt="Vercel" className="logo"/>
+                </a>
+            </footer>
+
+            <style jsx>{`
         .container {
           min-height: 100vh;
           padding: 0 0.5rem;
@@ -160,7 +184,7 @@ export default function Home() {
         }
       `}</style>
 
-      <style jsx global>{`
+            <style jsx global>{`
         html,
         body {
           padding: 0;
@@ -174,6 +198,6 @@ export default function Home() {
           box-sizing: border-box;
         }
       `}</style>
-    </Layout>
-  )
+        </Layout>
+    )
 }
